@@ -12,5 +12,4 @@ cardRouter.put('/cards/:cardId/likes', likeCard)
 
 cardRouter.delete('/cards/:cardId/likes', dislikeCard)
 
-
 module.exports = cardRouter;
