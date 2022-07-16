@@ -35,7 +35,7 @@ const getUserById = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: `Пользователь с таким ID не найден. ${err}` })
+        res.status(404).send({ message: `Пользователь с таким ID не найден.` })
         return
       }
       res.status(200).send(user)
@@ -45,6 +45,7 @@ const getUserById = (req, res) => {
         res.status(400).send({ message: `Не верный ID пользователя ${err}` })
         return
       }
+      console.log(err)
       res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
     })
 }
@@ -77,7 +78,7 @@ const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: `Пользователь с таким ID не найден. ${err}` })
+        res.status(404).send({ message: `Пользователь с таким ID не найден.` })
         return
       }
       res.status(200).send(user)
@@ -91,7 +92,6 @@ const updateUserAvatar = (req, res) => {
         res.status(400).send({ message: `Введены некоректные новые данные ${err}` })
         return
       }
-      console.log(err.name)
       res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
     })
 }

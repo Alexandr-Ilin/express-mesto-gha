@@ -63,7 +63,7 @@ const likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: `Неверные ID карточки или пользователя: ${err}` })
+        res.status(400).send({ message: `Неверные ID карточки или пользователя: ${err}` })
         return
       }
       res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
@@ -82,7 +82,7 @@ const dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: `Неверные ID карточки или пользователя: ${err}` })
+        res.status(400).send({ message: `Неверные ID карточки или пользователя: ${err}` })
         return
       }
       res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
