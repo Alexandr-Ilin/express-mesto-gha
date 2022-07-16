@@ -34,11 +34,16 @@ const getCards = (req, res) => {
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
     .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: `Карточка с таким ID не найден.` })
+        return
+      }
       res.status(200).send(card);
     })
     .catch((err) => {
+      console.log(err.name)
       if (err.name === 'CastError') {
-        res.status(404).send({ message: `Неверный ID карточки: ${err}` })
+        res.status(400).send({ message: `Неверный ID карточки: ${err}` })
         return
       }
       res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
