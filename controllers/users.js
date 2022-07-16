@@ -35,7 +35,7 @@ const getUserById = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        res.status(404).send(`Пользователь с таким ID не найден.`)
+        res.status(404).send({ message: `Пользователь с таким ID не найден. ${err}` })
         return
       }
       res.status(200).send(user)
@@ -54,21 +54,21 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(404).send(`Пользователь с таким ID не найден.`)
+        res.status(404).send({ message: `Пользователь с таким ID не найден. ${err}` })
         return
       }
       res.status(200).send(user)
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send(`Некоректный ID пользователя: ${err}`)
+        res.status(400).send({ message: `Некоректный ID пользователя: ${err}` })
         return
       }
       if (err.name === 'ValidationError') {
-        res.status(400).send(`Введены некоректные новые данные ${err}`)
+        res.status(400).send({ message: `Введены некоректные новые данные ${err}` })
         return
       }
-      res.status(500).send(`Внутренняя ошибка сервера: ${err}`)
+      res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
     })
 }
 
@@ -77,22 +77,22 @@ const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(404).send(`Пользователь с таким ID не найден.`)
+        res.status(404).send({ message: `Пользователь с таким ID не найден. ${err}` })
         return
       }
       res.status(200).send(user)
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send(`Некоректный ID пользователя: ${err}`)
+        res.status(400).send({ message: `Некоректный ID пользователя: ${err}` })
         return
       }
       if (err.name === 'ValidationError') {
-        res.status(400).send(`Введены некоректные новые данные ${err}`)
+        res.status(400).send({ message: `Введены некоректные новые данные ${err}` })
         return
       }
       console.log(err.name)
-      res.status(500).send(`Внутренняя ошибка сервера: ${err}`)
+      res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
     })
 }
 

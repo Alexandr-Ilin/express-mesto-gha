@@ -10,7 +10,7 @@ const createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send(`Переданы некорректные данные при создании карточки. ${err}`)
+        res.status(400).send({ message: `Переданы некорректные данные при создании карточки. ${err}` })
         return
       }
       res.status(500).send({ message: `Внутренняя ошибка сервера: ${ err }` })
@@ -35,7 +35,7 @@ const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: `Карточка с таким ID не найден.` })
+        res.status(404).send({ message: `Карточка с таким ID не найдена.` })
         return
       }
       res.status(200).send(card);
@@ -56,7 +56,7 @@ const likeCard = (req, res) => {
       { new: true })
     .then((card) => {
       if (!card) {
-        res.status(404).send(`Карточка с таким ID не найден.`)
+        res.status(404).send({ message: `Карточка с таким ID не найдена. ${err}` })
         return
       }
       res.status(200).send(card)
@@ -66,7 +66,7 @@ const likeCard = (req, res) => {
         res.status(404).send({ message: `Неверные ID карточки или пользователя: ${err}` })
         return
       }
-      res.status(500).send(`Внутренняя ошибка сервера: ${err}`)
+      res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
     })
 }
 
@@ -75,7 +75,7 @@ const dislikeCard = (req, res) => {
       { new: true })
     .then((card) => {
       if (!card) {
-        res.status(404).send(`Карточка с таким ID не найден.`)
+        res.status(404).send({ message: `Карточка с таким ID не найдена. ${err}` })
         return
       }
       res.status(200).send(card)
@@ -85,7 +85,7 @@ const dislikeCard = (req, res) => {
         res.status(404).send({ message: `Неверные ID карточки или пользователя: ${err}` })
         return
       }
-      res.status(500).send(`Внутренняя ошибка сервера: ${err}`)
+      res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
     })
 }
 

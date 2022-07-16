@@ -10,6 +10,6 @@ userRouter.get('/users/:id', getUserById)
 
 userRouter.patch('/users/me', updateUserProfile)
 
-userRouter.patch('/users/avatar', updateUserAvatar)
+userRouter.patch('/users/me/avatar', updateUserAvatar)
 
 module.exports = userRouter;
