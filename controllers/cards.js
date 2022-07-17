@@ -32,7 +32,7 @@ const getCards = (req, res) => {
 }
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findByIdAndDelete(req.params.id)
     .then((card) => {
       if (!card) {
         res.status(404).send({ message: `Карточка с таким ID не найдена.` })
