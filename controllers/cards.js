@@ -38,7 +38,7 @@ const deleteCard = (req, res) => {
         res.status(404).send({ message: `Карточка с таким ID не найдена.` })
         return
       }
-      res.status(200).send(card);
+      res.status(200).send({ message: `карточка удалена` });
     })
     .catch((err) => {
       console.log(err.name)
@@ -56,7 +56,7 @@ const likeCard = (req, res) => {
       { new: true })
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: `Карточка с таким ID не найдена. ${err}` })
+        res.status(404).send({ message: `Карточка с таким ID не найдена.` })
         return
       }
       res.status(200).send(card)
@@ -75,7 +75,7 @@ const dislikeCard = (req, res) => {
       { new: true })
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: `Карточка с таким ID не найдена. ${err}` })
+        res.status(404).send({ message: `Карточка с таким ID не найдена.` })
         return
       }
       res.status(200).send(card)
