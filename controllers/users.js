@@ -6,7 +6,7 @@ const createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => {
-      res.status(201).send({ data: user })
+      res.status(201).send(user)
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -34,10 +34,10 @@ const getUsers = (req, res) => {
 const getUserById = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
-      if (!user) {
-        res.status(404).send({ message: `Пользователь с таким ID не найден.` })
-        return
-      }
+      // if (!user) {
+      //   res.status(404).send({ message: `Пользователь с таким ID не найден.` })
+      //   return
+      // }
       res.status(200).send(user)
     })
     .catch((err) => {
@@ -55,8 +55,8 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true, upsert: false }, )
     .then((user) => {
       //
-      res.status(200).send({ data: user })
-      console.log(typeof user)
+      res.status(200).send(user)
+        //console.log(typeof user)
         // res.status(200).send({
         //   name: user.name,
         //   about: user.about,
@@ -108,4 +108,4 @@ module.exports = {
   getUserById,
   updateUserProfile,
   updateUserAvatar,
-}
+};
