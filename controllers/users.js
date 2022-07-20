@@ -52,7 +52,7 @@ const getUserById = (req, res) => {
 
 const updateUserProfile = (req, res) => {
   const { name, about } = req.body
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true, upsert: false }, )
+  User.findByIdAndUpdate(req.user._id, { name, about }, { runValidators: true }, )
     .then((user) => {
       //
       console.log(req.params)
