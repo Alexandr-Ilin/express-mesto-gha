@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   req.user = {
     //_id: '62d1630fca49d61964bb431d' // пользователя нет
-    _id: '62d88333e469d729488a69ba' // пользователь есть
+    _id: '5d8b8592978f8bd833ca8133' // пользователь есть
   };
 
   next();
