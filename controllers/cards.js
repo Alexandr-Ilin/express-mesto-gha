@@ -60,7 +60,6 @@ const deleteCard = (req, res) => {
       res.status(200).send({ message: `карточка удалена` });
     })
     .catch((err) => {
-      console.log(err.name)
       if (err.name === 'CastError') {
         res.status(400).send({ message: `Неверный ID карточки: ${err}` })
         return
