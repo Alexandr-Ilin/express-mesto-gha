@@ -21,7 +21,8 @@ const getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
       if (cards.length === 0) {
-        res.status(404).send({ message: "Карточки не найдены" });
+        //res.status(404).send({ message: "Карточки не найдены" });
+        res.status(200).send(cards);
         return;
       }
       res.status(200).send(cards);
@@ -31,6 +32,24 @@ const getCards = (req, res) => {
     })
 }
 
+const getCardById = (req, res) => {
+  Card.findById(req.params.id)
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: `Пользователь с таким ID не найден.` })
+        return
+      }
+      res.status(200).send(card)
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: `Не верный ID пользователя ${err}` })
+        return
+      }
+      console.log(err)
+      res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
+    })
+}
 const deleteCard = (req, res) => {
   Card.findByIdAndDelete(req.params.id)
     .then((card) => {
@@ -95,4 +114,5 @@ module.exports = {
   deleteCard,
   likeCard,
   dislikeCard,
+  getCardById,
 }
