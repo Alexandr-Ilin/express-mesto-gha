@@ -55,13 +55,14 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true, upsert: false })
     .then((user) => {
       //
+      res.status(200).send(user)
       console.log(user)
-      res.status(200).send({
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        _id: user._id
-      })
+        // res.status(200).send({
+        //   name: user.name,
+        //   about: user.about,
+        //   avatar: user.avatar,
+        //   _id: user._id
+        // })
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -72,6 +73,7 @@ const updateUserProfile = (req, res) => {
         res.status(400).send({ message: `Введены некоректные новые данные ${err}` })
         return
       }
+
       res.status(500).send({ message: `Внутренняя ошибка сервера: ${err}` })
     })
 }
