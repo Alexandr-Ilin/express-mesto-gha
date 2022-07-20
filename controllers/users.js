@@ -6,7 +6,7 @@ const createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => {
-      res.status(201).send(user)
+      res.status(201).send({ data: user })
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -55,7 +55,7 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true, upsert: false }, )
     .then((user) => {
       //
-      res.status(200).send({ user: user })
+      res.status(200).send({ data: user })
       console.log(typeof user)
         // res.status(200).send({
         //   name: user.name,
