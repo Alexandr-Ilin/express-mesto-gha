@@ -34,10 +34,10 @@ const getUsers = (req, res) => {
 const getUserById = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
-      // if (!user) {
-      //   res.status(404).send({ message: `Пользователь с таким ID не найден.` })
-      //   return
-      // }
+      if (!user) {
+        res.status(404).send({ message: `Пользователь с таким ID не найден.` })
+        return
+      }
       res.status(200).send(user)
     })
     .catch((err) => {
@@ -55,6 +55,8 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true, upsert: false }, )
     .then((user) => {
       //
+      console.log(req.params)
+      console.log(user)
       res.status(200).send(user)
         //console.log(typeof user)
         // res.status(200).send({
@@ -83,9 +85,11 @@ const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
+        console.log(user)
         res.status(404).send({ message: `Пользователь с таким ID не найден.` })
         return
       }
+      console.log(user)
       res.status(200).send(user)
     })
     .catch((err) => {
