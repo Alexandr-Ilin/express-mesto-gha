@@ -38,7 +38,7 @@ const getUserById = (req, res) => {
         res.status(404).send({ message: `Пользователь с таким ID не найден.` })
         return
       }
-      res.status(200).send(user)
+      res.status(200).send(data: user)
     })
     .catch((err) => {
       if (err.name === 'CastError') {
