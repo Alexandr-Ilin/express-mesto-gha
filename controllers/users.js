@@ -58,7 +58,11 @@ const updateUserProfile = (req, res) => {
       //   res.status(404).send({ message: `Пользователь с таким ID не найден. ${err}` })
       //   return
       // }
-      res.status(200).send({ data: user })
+      res.status(200).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar
+      })
     })
     .catch((err) => {
       if (err.name === 'CastError') {
