@@ -52,11 +52,11 @@ const getUserById = (req, res) => {
 
 const updateUserProfile = (req, res) => {
   const { name, about } = req.body
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true, upsert: false })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true, upsert: false }, )
     .then((user) => {
       //
-      res.status(200).send(user)
-      console.log(user)
+      res.status(200).send({ user: user })
+      console.log(typeof user)
         // res.status(200).send({
         //   name: user.name,
         //   about: user.about,
