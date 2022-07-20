@@ -61,7 +61,8 @@ const updateUserProfile = (req, res) => {
       res.status(200).send({
         name: user.name,
         about: user.about,
-        avatar: user.avatar
+        avatar: user.avatar,
+        _id: user._id,
       })
     })
     .catch((err) => {
