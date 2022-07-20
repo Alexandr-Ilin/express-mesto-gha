@@ -53,17 +53,12 @@ const getUserById = (req, res) => {
 const updateUserProfile = (req, res) => {
   //const { name, about } = req.body
   User.findByIdAndUpdate(req.user._id, req.body, { new: true, runValidators: true })
-    .then((data) => {
+    .then((user) => {
       // if (!user) {
       //   res.status(404).send({ message: `Пользователь с таким ID не найден. ${err}` })
       //   return
       // }
-      res.status(200).send({
-        name: data.name,
-        about: data.about,
-        avatar: data.avatar,
-        _id: data._id,
-      })
+      res.status(200).send({ user })
     })
     .catch((err) => {
       if (err.name === 'CastError') {
