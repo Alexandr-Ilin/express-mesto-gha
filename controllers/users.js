@@ -16,10 +16,10 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `Данные не корректны ${err}` })
+        res.status(BAD_REQUEST_STATUS).send({ message: `Данные не корректны.` })
         return
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера: ${ err }` })
+      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера.` })
     })
 }
 
@@ -27,13 +27,13 @@ const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
       if (users.length === 0) {
-        res.status(NOT_FOUND_STATUS).send({ message: "Пользователи не найдены" });
+        res.status(NOT_FOUND_STATUS).send({ message: "Пользователи не найдены." });
         return;
       }
       res.status(OK_STATUS).send(users);
     })
     .catch((err) => {
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера: ${err}` });
+      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера.` });
     })
 }
 
@@ -48,10 +48,10 @@ const getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `Не верный ID пользователя ${err}` })
+        res.status(BAD_REQUEST_STATUS).send({ message: `Не верный ID пользователя.` })
         return
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера: ${err}` })
+      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера.` })
     })
 }
 
@@ -67,15 +67,15 @@ const updateUserProfile = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `Некоректный ID пользователя: ${err}` })
+        res.status(BAD_REQUEST_STATUS).send({ message: `Некоректный ID пользователя.` })
         return
       }
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `Введены некоректные новые данные ${err}` })
+        res.status(BAD_REQUEST_STATUS).send({ message: `Введены некоректные новые данные.` })
         return
       }
 
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера: ${err}` })
+      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера.` })
     })
 }
 
@@ -91,14 +91,14 @@ const updateUserAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `Некоректный ID пользователя: ${err}` })
+        res.status(BAD_REQUEST_STATUS).send({ message: `Некоректный ID пользователя.` })
         return
       }
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `Введены некоректные новые данные ${err}` })
+        res.status(BAD_REQUEST_STATUS).send({ message: `Введены некоректные новые данные.` })
         return
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера: ${err}` })
+      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера.` })
     })
 }
 

@@ -18,10 +18,10 @@ const createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `Переданы некорректные данные при создании карточки. ${err}` })
+        res.status(BAD_REQUEST_STATUS).send({ message: `Переданы некорректные данные при создании карточки.` })
         return
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера: ${ err }` })
+      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера.` })
     })
 }
 
@@ -87,10 +87,10 @@ const likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `Неверные ID карточки или пользователя: ${err}` })
+        res.status(BAD_REQUEST_STATUS).send({ message: `Неверные ID карточки или пользователя.` })
         return
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера: ${err}` })
+      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера.` })
     })
 }
 
