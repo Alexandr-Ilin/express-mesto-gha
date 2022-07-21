@@ -3,21 +3,21 @@ const mongoose = require('mongoose');
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    minlength: 2,
-    maxlength: 30,
+    required: [true, 'Поле {PATH} обязательно.'],
+    minlength: [2, 'Минимально 2 символа.'],
+    maxlength: [30, 'Максимально 30 символов.'],
   },
 
   link: {
     type: String,
-    required: true,
+    required: [true, 'Поле {PATH} обязательно.'],
     minlength: 2,
   },
 
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
-    required: true,
+    required: [true, 'Поле {PATH} обязательно.'],
   },
 
   likes: [{
