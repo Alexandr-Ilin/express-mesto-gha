@@ -16,7 +16,7 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: err.message });
+        res.status(BAD_REQUEST_STATUS).send({ message: `${Object.values(err.errors).map((error) => error.message).join(' ')}` });
         return;
       }
       res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
@@ -71,7 +71,7 @@ const updateUserProfile = (req, res) => {
         return;
       }
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: err.message });
+        res.status(BAD_REQUEST_STATUS).send({ message: `${Object.values(err.errors).map((error) => error.message).join(' ')}` });
         return;
       }
 
@@ -95,7 +95,7 @@ const updateUserAvatar = (req, res) => {
         return;
       }
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: err.message });
+        res.status(BAD_REQUEST_STATUS).send({ message: `${Object.values(err.errors).map((error) => error.message).join(' ')}` });
         return;
       }
       res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });

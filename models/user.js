@@ -4,14 +4,14 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Поле {PATH} обязательно.'],
-    minlength: [2, 'Минимально 2 символа.'],
+    minlength: [2, 'Поле {PATH} минимально 2 символа.'],
     maxlength: [30, 'Максимально 30 символов.'],
   },
 
   about: {
     type: String,
     required: [true, 'Поле  {PATH} обязательно.'],
-    minlength: [2, 'Минимально 2 символа.'],
+    minlength: [2, 'Поле {PATH} минимально 2 символа.'],
     maxlength: [30, 'Максимально 30 символов.'],
   },
 
