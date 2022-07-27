@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { NOT_FOUND_STATUS } = require('./utils/status');
@@ -19,6 +20,8 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use(cookieParser('some-secret-key'));
 
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);

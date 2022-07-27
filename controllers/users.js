@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const {
@@ -8,17 +10,51 @@ const {
   INTERNAL_SERVER_ERROR_STATUS,
 } = require('../utils/status');
 
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+const login = (req, res) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
     .then((user) => {
+      // аутентификация успешна! пользователь в переменной user
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+        })
+        .end();
+    })
+    .catch((err) => {
+      // ошибка аутентификации
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
+};
+
+const createUser = (req, res) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => {
+      console.log('user', user);
       res.status(CREATED_STATUS).send({ data: user });
     })
     .catch((err) => {
+      if (err.code === 11000) {
+        res.status(400).send({ message: 'Данный пользователь зарегистрирован' });
+        return;
+      }
+
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST_STATUS).send({ message: `${Object.values(err.errors).map((error) => error.message).join(' ')}` });
         return;
       }
+      console.log(err.code);
       res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
     });
 };
@@ -98,11 +134,12 @@ const updateUserAvatar = (req, res) => {
         res.status(BAD_REQUEST_STATUS).send({ message: `${Object.values(err.errors).map((error) => error.message).join(' ')}` });
         return;
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера. ${err}` });
     });
 };
 
 module.exports = {
+  login,
   createUser,
   getUsers,
   getUserById,
