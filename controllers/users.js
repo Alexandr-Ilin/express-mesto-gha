@@ -31,6 +31,8 @@ const login = (req, res) => {
     });
 };
 
+// GET /users/me - возвращает информацию о текущем пользователе
+
 const createUser = (req, res) => {
   const {
     name, about, avatar, email, password,
@@ -74,7 +76,7 @@ const getUsers = (req, res) => {
 };
 
 const getUserById = (req, res) => {
-  User.findById(req.params.id)
+  User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь с таким ID не найден.' });

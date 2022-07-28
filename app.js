@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const auth = require('./middlewares/auth');
+const { login, createUser } = require('./controllers/users');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { NOT_FOUND_STATUS } = require('./utils/status');
@@ -23,8 +25,14 @@ app.use((req, res, next) => {
 
 app.use(cookieParser('some-secret-key'));
 
-app.use('/users', userRouter);
+app.post('/signin', login);
+app.post('/signup', createUser);
+
+// app.use(auth);
+
+app.use('/users', auth, userRouter);
 app.use('/cards', cardRouter);
+
 app.use('*', (req, res) => {
   res.status(NOT_FOUND_STATUS).send({ message: 'Страница не найдена' });
 });

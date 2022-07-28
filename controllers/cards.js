@@ -56,23 +56,25 @@ const getCardById = (req, res) => {
       res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
     });
 };
+
 const deleteCard = (req, res) => {
-  Card.findByIdAndDelete(req.params.id)
+  Card.findById(req.params.id)
     .then((card) => {
-      if (!card) {
-        res.status(NOT_FOUND_STATUS).send({ message: 'Карточка с таким ID не найдена.' });
-        return;
+      if (card.owner === req.user) {
+        Card.findByIdAndDelete(req.params.id)
+          .then((delCard) => {
+            res.status(OK_STATUS).send({ message: 'карточка удалена.' });
+          })
+          .catch(() => {
+            res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+          });
       }
-      res.status(OK_STATUS).send({ message: 'карточка удалена.' });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: 'Неверный ID карточки.' });
-        return;
-      }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
     });
-};
+}
+//   console.log(req.params, 'owner');
+//   console.log(req.user, 'user');
+//   res.send('нельзя');
+// };
 
 const likeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
