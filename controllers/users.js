@@ -48,7 +48,7 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        res.status(400).send({ message: 'Данный пользователь зарегистрирован' });
+        res.status(409).send({ message: 'Данный пользователь зарегистрирован' });
         return;
       }
 

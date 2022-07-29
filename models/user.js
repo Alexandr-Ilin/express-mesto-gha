@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Поле {PATH} обязательно.'],
     minlength: 8,
+    select: false,
   },
 }, { versionKey: false });
 

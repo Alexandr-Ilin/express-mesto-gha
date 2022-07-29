@@ -57,20 +57,54 @@ const getCardById = (req, res) => {
     });
 };
 
-const deleteCard = (req, res) => {
-  Card.findById(req.params.id)
-    .then((card) => {
-      if (card.owner === req.user) {
-        Card.findByIdAndDelete(req.params.id)
-          .then((delCard) => {
-            res.status(OK_STATUS).send({ message: 'карточка удалена.' });
-          })
-          .catch(() => {
-            res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
-          });
-      }
-    });
-}
+// const deleteCard = (req, res) => {
+//   getCardById(req, res);
+//   .then
+// };
+// const getCardById = (req, res) => {
+//   Card.findById(req.params.id)
+//     .then((card) => {
+//       if (!card) {
+//         res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь с таким ID не найден.' });
+//         return;
+//       }
+//       //  res.status(OK_STATUS).send(card);
+//     })
+//     .catch((err) => {
+//       if (err.name === 'CastError') {
+//         res.status(BAD_REQUEST_STATUS).send({ message: 'Не верный ID пользователя.' });
+//         return;
+//       }
+//       res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+//     });
+// };
+// const deleteCard = (req, res) => {
+//   Card.findById(req.params.id)
+//     .then((card) => {
+//       if (!card) {
+//         res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь с таким ID не найден.' });
+//         return;
+//       }
+//       if (card.owner.toString() === req.user._id) {
+//         Card.findByIdAndDelete(req.params.id)
+//           .then((delCard) => {
+//             console.log(delCard);
+//             res.status(OK_STATUS).send({ message: 'карточка удалена.' });
+//           })
+//           .catch(() => {
+// eslint-disable-next-line max-len
+//             res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+//           });
+//       }
+//     })
+//     .catch((err) => {
+//       if (err.name === 'CastError') {
+//         res.status(BAD_REQUEST_STATUS).send({ message: 'Не верный ID пользователя.' });
+//         return;
+//       }
+//       res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+//     });
+// };
 //   console.log(req.params, 'owner');
 //   console.log(req.user, 'user');
 //   res.send('нельзя');
