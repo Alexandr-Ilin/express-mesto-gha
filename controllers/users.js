@@ -1,16 +1,19 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const NotFoundError = require('../utils/errors/NotFoundError');
+const ConflictError = require('../utils/errors/ConflictError');
+const BadRequestError = require('../utils/errors/BadRequestError');
 
 const {
   OK_STATUS,
   CREATED_STATUS,
-  BAD_REQUEST_STATUS,
-  NOT_FOUND_STATUS,
-  INTERNAL_SERVER_ERROR_STATUS,
+  // BAD_REQUEST_STATUS,
+  // NOT_FOUND_STATUS,
+  // NTERNAL_SERVER_ERROR_STATUS,
 } = require('../utils/status');
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -23,17 +26,18 @@ const login = (req, res) => {
         })
         .end();
     })
-    .catch((err) => {
-      // ошибка аутентификации
-      res
-        .status(401)
-        .send({ message: err.message });
-    });
+    .catch(next);
+  // .catch((err) => {
+  //   // ошибка аутентификации
+  //   res
+  //     .status(401)
+  //     .send({ message: err.message });
+  // });
 };
 
 // GET /users/me - возвращает информацию о текущем пользователе
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -48,95 +52,93 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        res.status(409).send({ message: 'Данный пользователь зарегистрирован' });
-        return;
+        throw new ConflictError('Данный пользователь зарегистрирован');
+        // return;
       }
 
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `${Object.values(err.errors).map((error) => error.message).join(' ')}` });
-        return;
+        throw new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`);
+        // return;
       }
       console.log(err.code);
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+      next(err);
     });
 };
 
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (users.length === 0) {
-        res.status(NOT_FOUND_STATUS).send({ message: 'Пользователи не найдены.' });
-        return;
+        throw new NotFoundError('Пользователи не найдены.');
+        // return;
       }
       res.status(OK_STATUS).send(users);
     })
-    .catch(() => {
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
-    });
+    .catch(next);
 };
 
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь с таким ID не найден.' });
-        return;
+        throw new NotFoundError('Нет пользователя с таким id');
+        // return;
       }
       res.status(OK_STATUS).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: 'Не верный ID пользователя.' });
-        return;
+        throw new BadRequestError('Не верный ID пользователя.');
+        // return;
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+      next(err);
     });
 };
 
-const updateUserProfile = (req, res) => {
+const updateUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь с таким ID не найден.' });
-        return;
+        throw new NotFoundError({ message: 'Пользователь с таким ID не найден.' });
+        // return;
       }
       res.status(OK_STATUS).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: 'Некоректный ID пользователя.' });
-        return;
+        throw new BadRequestError('Некоректный ID пользователя.');
+        // return;
       }
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `${Object.values(err.errors).map((error) => error.message).join(' ')}` });
-        return;
+        throw new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`);
+        // return;
       }
 
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+      next(err);
     });
 };
 
-const updateUserAvatar = (req, res) => {
+const updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь с таким ID не найден.' });
-        return;
+        throw new NotFoundError('Пользователь с таким ID не найден.');
+        // return;
       }
       res.status(OK_STATUS).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: 'Некоректный ID пользователя.' });
-        return;
+        throw new BadRequestError('Некоректный ID пользователя.');
+        // return;
       }
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `${Object.values(err.errors).map((error) => error.message).join(' ')}` });
-        return;
+        throw new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`);
+        // return;
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: `Внутренняя ошибка сервера. ${err}` });
+      next(err);
     });
 };
 

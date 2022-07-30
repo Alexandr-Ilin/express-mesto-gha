@@ -1,14 +1,16 @@
 const Card = require('../models/card');
+const BadRequestError = require('../utils/errors/BadRequestError');
+const NotFoundError = require('../utils/errors/NotFoundError');
 
 const {
   OK_STATUS,
   CREATED_STATUS,
-  BAD_REQUEST_STATUS,
-  NOT_FOUND_STATUS,
-  INTERNAL_SERVER_ERROR_STATUS,
+  // BAD_REQUEST_STATUS,
+  // NOT_FOUND_STATUS,
+  // INTERNAL_SERVER_ERROR_STATUS,
 } = require('../utils/status');
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
@@ -18,14 +20,14 @@ const createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: `${Object.values(err.errors).map((error) => error.message).join(' ')}` });
-        return;
+        throw new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`);
+        // return;
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+      next(err);
     });
 };
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
       if (cards.length === 0) {
@@ -34,26 +36,25 @@ const getCards = (req, res) => {
       }
       res.status(OK_STATUS).send(cards);
     })
-    .catch(() => {
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
-    });
+    .catch(next);
 };
 
-const getCardById = (req, res) => {
+const getCardById = (req, res, next) => {
   Card.findById(req.params.id)
     .then((card) => {
       if (!card) {
-        res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь с таким ID не найден.' });
-        return;
+        throw new NotFoundError('Пользователь с таким ID не найден.');
+        // return;
       }
       res.status(OK_STATUS).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: 'Не верный ID пользователя.' });
-        return;
+        throw new BadRequestError('Не верный ID пользователя.');
+        // return;
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+      console.log(err.message, 'err');
+      next(err);
     });
 };
 
@@ -110,46 +111,46 @@ const getCardById = (req, res) => {
 //   res.send('нельзя');
 // };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        res.status(NOT_FOUND_STATUS).send({ message: 'Карточка с таким ID не найдена.' });
-        return;
+        throw new NotFoundError({ message: 'Карточка с таким ID не найдена.' });
+        // return;
       }
       res.status(OK_STATUS).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: 'Неверные ID карточки или пользователя.' });
-        return;
+        throw new BadRequestError('Неверные ID карточки или пользователя.');
+        // return;
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+      next(err);
     });
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        res.status(NOT_FOUND_STATUS).send({ message: 'Карточка с таким ID не найдена.' });
-        return;
+        throw new NotFoundError({ message: 'Карточка с таким ID не найдена.' });
+        // return;
       }
       res.status(OK_STATUS).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_STATUS).send({ message: 'Неверные ID карточки или пользователя.' });
-        return;
+        throw new BadRequestError('Неверные ID карточки или пользователя.');
+        // return;
       }
-      res.status(INTERNAL_SERVER_ERROR_STATUS).send({ message: 'Внутренняя ошибка сервера.' });
+      next(err);
     });
 };
 
 module.exports = {
   createCard,
   getCards,
-  deleteCard,
+  // deleteCard,
   likeCard,
   dislikeCard,
   getCardById,
