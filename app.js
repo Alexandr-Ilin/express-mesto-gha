@@ -7,7 +7,7 @@ const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
-const { validationCreateUser, validationLogin, validationAuth } = require('./middlewares/validation');
+const { validationCreateUser, validationLogin } = require('./middlewares/validation');
 const { NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR_STATUS, JWT_SECRET } = require('./utils/consts');
 
 const { PORT = 3000 } = process.env;
@@ -24,7 +24,7 @@ app.use(cookieParser(JWT_SECRET));
 app.post('/signin', validationLogin, login);
 app.post('/signup', validationCreateUser, createUser);
 
-app.use(validationAuth, auth);
+app.use(auth);
 
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);

@@ -1,7 +1,6 @@
 const userRouter = require('express').Router();
 
 const {
-  // createUser,
   getMe,
   getUsers,
   getUserById,
@@ -14,8 +13,6 @@ const {
   validationUpdateAvatar,
   validationGetUserById,
 } = require('../middlewares/validation');
-
-// userRouter.post('/', createUser);
 
 userRouter.get('/', getUsers);
 
