@@ -8,17 +8,15 @@ const BadRequestError = require('../utils/errors/BadRequestError');
 const {
   OK_STATUS,
   CREATED_STATUS,
-  // BAD_REQUEST_STATUS,
-  // NOT_FOUND_STATUS,
-  // NTERNAL_SERVER_ERROR_STATUS,
-} = require('../utils/status');
+  JWT_SECRET,
+} = require('../utils/consts');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
       // аутентификация успешна! пользователь в переменной user
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
       res
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
@@ -27,15 +25,18 @@ const login = (req, res, next) => {
         .end();
     })
     .catch(next);
-  // .catch((err) => {
-  //   // ошибка аутентификации
-  //   res
-  //     .status(401)
-  //     .send({ message: err.message });
-  // });
 };
 
 // GET /users/me - возвращает информацию о текущем пользователе
+const getMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      res.status(OK_STATUS).send({ data: user });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
 const createUser = (req, res, next) => {
   const {
@@ -46,21 +47,22 @@ const createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => {
-      console.log('user', user);
-      res.status(CREATED_STATUS).send({ data: user });
+    .then((data) => {
+      res.status(CREATED_STATUS).send({
+        name: data.name,
+        about: data.about,
+        avatar: data.avatar,
+        _id: data._id,
+        email: data.email,
+      });
     })
     .catch((err) => {
       if (err.code === 11000) {
-        throw new ConflictError('Данный пользователь зарегистрирован');
-        // return;
+        next(new ConflictError('Данный пользователь зарегистрирован'));
       }
-
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`);
-        // return;
+        next(new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`));
       }
-      console.log(err.code);
       next(err);
     });
 };
@@ -69,8 +71,7 @@ const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (users.length === 0) {
-        throw new NotFoundError('Пользователи не найдены.');
-        // return;
+        next(new NotFoundError('Пользователи не найдены.'));
       }
       res.status(OK_STATUS).send(users);
     })
@@ -78,18 +79,16 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  User.findById(req.user._id)
+  User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Нет пользователя с таким id');
-        // return;
+        next(new NotFoundError('Нет пользователя с таким id'));
       }
       res.status(OK_STATUS).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Не верный ID пользователя.');
-        // return;
+        next(new BadRequestError('Не верный ID пользователя.'));
       }
       next(err);
     });
@@ -100,19 +99,16 @@ const updateUserProfile = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError({ message: 'Пользователь с таким ID не найден.' });
-        // return;
+        next(new NotFoundError({ message: 'Пользователь с таким ID не найден.' }));
       }
       res.status(OK_STATUS).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Некоректный ID пользователя.');
-        // return;
+        next(new BadRequestError('Некоректный ID пользователя.'));
       }
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`);
-        // return;
+        next(new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`));
       }
 
       next(err);
@@ -124,19 +120,16 @@ const updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь с таким ID не найден.');
-        // return;
+        next(new BadRequestError('Некоректный ID пользователя.'));
       }
       res.status(OK_STATUS).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Некоректный ID пользователя.');
-        // return;
+        next(new BadRequestError('Некоректный ID пользователя.'));
       }
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`);
-        // return;
+        next(new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`));
       }
       next(err);
     });
@@ -144,6 +137,7 @@ const updateUserAvatar = (req, res, next) => {
 
 module.exports = {
   login,
+  getMe,
   createUser,
   getUsers,
   getUserById,

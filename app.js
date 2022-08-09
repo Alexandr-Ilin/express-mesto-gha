@@ -2,11 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
-const { NOT_FOUND_STATUS } = require('./utils/status');
+const { validationCreateUser, validationLogin, validationAuth } = require('./middlewares/validation');
+const { NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR_STATUS, JWT_SECRET } = require('./utils/consts');
 
 const { PORT = 3000 } = process.env;
 
@@ -17,19 +19,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.use((req, res, next) => {
-//   // req.user = { _id: '62d892cac8f2ccc69d9c0887' };
-//   req.user = { _id: '62d16789a7a48d2610722b1f' };
+app.use(cookieParser(JWT_SECRET));
 
-//   next();
-// });
+app.post('/signin', validationLogin, login);
+app.post('/signup', validationCreateUser, createUser);
 
-app.use(cookieParser('some-secret-key'));
-
-app.post('/signin', login);
-app.post('/signup', createUser);
-
-// app.use(auth);
+app.use(validationAuth, auth);
 
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
@@ -38,19 +33,17 @@ app.use('*', (req, res) => {
   res.status(NOT_FOUND_STATUS).send({ message: 'Страница не найдена' });
 });
 
-app.use((err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
-});
+app.use(errors());
 
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
-  const { statusCode = 500, message } = err;
-  console.log(message, 'message');
+  const { statusCode = INTERNAL_SERVER_ERROR_STATUS, message } = err;
   res
     .status(statusCode)
     .send({
       // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === 500
+      message: statusCode === INTERNAL_SERVER_ERROR_STATUS
+        // ? 'На сервере произошла ошибка'
         ? 'На сервере произошла ошибка'
         : message,
     });
