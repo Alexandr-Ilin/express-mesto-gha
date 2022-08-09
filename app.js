@@ -35,7 +35,7 @@ app.use('*', (req, res) => {
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = INTERNAL_SERVER_ERROR_STATUS, message } = err;
   res
