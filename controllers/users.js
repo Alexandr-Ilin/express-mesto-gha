@@ -22,7 +22,7 @@ const login = (req, res, next) => {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
         })
-        .send({ message: 'Вы успешно авторизировались'});
+        .send({ message: 'Вы успешно авторизировались' });
     })
     .catch(next);
 };
