@@ -56,7 +56,7 @@ const getCardById = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findById(req.params.id)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Карточка с таким ID не найдена.'));
@@ -66,8 +66,7 @@ const deleteCard = (req, res, next) => {
         next(new ForbiddenError('Вы можете удалять только свои карточки'));
         return;
       }
-      console.log(card);
-      Card.findByIdAndDelete(req.params.id)
+      Card.findByIdAndDelete(req.params.cardId)
         .then(() => res.status(OK_STATUS).send({ message: 'Карточка удалена' }))
         .catch(next);
     })
@@ -84,7 +83,7 @@ const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        next(new NotFoundError({ message: 'Карточка с таким ID не найдена.' }));
+        next(new NotFoundError('Карточка с таким ID не найдена.'));
         return;
       }
       res.status(OK_STATUS).send(card);
@@ -102,13 +101,15 @@ const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        next(new NotFoundError({ message: 'Карточка с таким ID не найдена.' }));
+        next(new NotFoundError('Карточка с таким ID не найдена.'));
+        return;
       }
       res.status(OK_STATUS).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Неверные ID карточки или пользователя.'));
+        return;
       }
       next(err);
     });

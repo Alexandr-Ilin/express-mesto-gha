@@ -18,9 +18,9 @@ cardRouter.post('/', validationCreateCard, createCard);
 
 cardRouter.get('/', getCards);
 
-cardRouter.get('/:id', validationGetCardById, getCardById);
+cardRouter.get('/:cardId', validationGetCardById, getCardById);
 
-cardRouter.delete('/:id', deleteCard);
+cardRouter.delete('/:cardId', validationGetCardById, deleteCard);
 
 cardRouter.put('/:cardId/likes', validationGetCardById, likeCard);
 
