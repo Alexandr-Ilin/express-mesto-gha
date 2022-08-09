@@ -15,7 +15,7 @@ const validationUpdateAvatar = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string()
       .required()
-      .uri(),
+      .uri({ scheme: [/https?/] }),
   }),
 });
 
@@ -43,7 +43,7 @@ const validationCreateCard = celebrate({
       .max(30),
     link: Joi.string()
       .required()
-      .uri(),
+      .uri({ scheme: [/https?/] }),
   }),
 });
 
@@ -56,7 +56,7 @@ const validationCreateUser = celebrate({
       .min(2)
       .max(30),
     avatar: Joi.string()
-      .uri(),
+      .uri({ scheme: [/https?/] }),
     email: Joi.string()
       .required()
       .email({ tlds: { allow: false } }),
