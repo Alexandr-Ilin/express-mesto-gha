@@ -22,7 +22,7 @@ const login = (req, res, next) => {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
         })
-        .send('Вы успешно авторизировались');
+        .send({ message: 'Вы успешно авторизировались'});
     })
     .catch(next);
 };
@@ -59,9 +59,11 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Данный пользователь зарегистрирован'));
+        return;
       }
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`));
+        return;
       }
       next(err);
     });
@@ -72,6 +74,7 @@ const getUsers = (req, res, next) => {
     .then((users) => {
       if (users.length === 0) {
         next(new NotFoundError('Пользователи не найдены.'));
+        return;
       }
       res.status(OK_STATUS).send(users);
     })
@@ -83,12 +86,14 @@ const getUserById = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFoundError('Нет пользователя с таким id'));
+        return;
       }
       res.status(OK_STATUS).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Не верный ID пользователя.'));
+        return;
       }
       next(err);
     });
@@ -100,15 +105,18 @@ const updateUserProfile = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFoundError({ message: 'Пользователь с таким ID не найден.' }));
+        return;
       }
       res.status(OK_STATUS).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некоректный ID пользователя.'));
+        return;
       }
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`));
+        return;
       }
 
       next(err);
@@ -121,15 +129,18 @@ const updateUserAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new BadRequestError('Некоректный ID пользователя.'));
+        return;
       }
       res.status(OK_STATUS).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некоректный ID пользователя.'));
+        return;
       }
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`));
+        return;
       }
       next(err);
     });

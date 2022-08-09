@@ -29,7 +29,7 @@ const validationGetUserById = celebrate({
 
 const validationGetCardById = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string()
+    id: Joi.string()
       .alphanum()
       .length(24),
   }),

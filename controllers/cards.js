@@ -19,6 +19,7 @@ const createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(' ')}`));
+        return;
       }
       next(err);
     });
@@ -41,12 +42,14 @@ const getCardById = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Пользователь с таким ID не найден.'));
+        return;
       }
       res.status(OK_STATUS).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Не верный ID пользователя.'));
+        return;
       }
       next(err);
     });
@@ -57,17 +60,24 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Карточка с таким ID не найдена.'));
+        return;
       }
-      if (card.owner.toString() === req.user._id) {
-        Card.findByIdAndDelete(req.params.id)
-          .then(() => {
-            res.status(OK_STATUS).send({ message: 'карточка удалена.' });
-          })
-          .catch(next);
+      if (card.owner.toString() !== req.user._id) {
+        next(new ForbiddenError('Вы можете удалять только свои карточки'));
+        return;
       }
-      next(new ForbiddenError('Вы можете удалять только свои карточки'));
+      console.log(card);
+      Card.findByIdAndDelete(req.params.id)
+        .then(() => res.status(OK_STATUS).send({ message: 'Карточка удалена' }))
+        .catch(next);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Неверный ID карточки'));
+        return;
+      }
+      next(err);
+    });
 };
 
 const likeCard = (req, res, next) => {
@@ -75,12 +85,14 @@ const likeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFoundError({ message: 'Карточка с таким ID не найдена.' }));
+        return;
       }
       res.status(OK_STATUS).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Неверные ID карточки или пользователя.'));
+        return;
       }
       next(err);
     });
