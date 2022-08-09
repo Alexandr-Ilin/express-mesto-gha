@@ -35,7 +35,8 @@ app.use('*', (req, res) => {
 
 app.use(errors());
 
-app.use((err, req, res) => {
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = INTERNAL_SERVER_ERROR_STATUS, message } = err;
   res
