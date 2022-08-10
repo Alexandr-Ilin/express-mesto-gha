@@ -8,7 +8,8 @@ const { login, createUser } = require('./controllers/users');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { validationCreateUser, validationLogin } = require('./middlewares/validation');
-const { NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR_STATUS, JWT_SECRET } = require('./utils/consts');
+const NotFoundError = require('./utils/errors/NotFoundError');
+const { INTERNAL_SERVER_ERROR_STATUS } = require('./utils/consts');
 
 const { PORT = 3000 } = process.env;
 
@@ -19,7 +20,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(cookieParser(JWT_SECRET));
+app.use(cookieParser());
 
 app.post('/signin', validationLogin, login);
 app.post('/signup', validationCreateUser, createUser);
@@ -29,8 +30,8 @@ app.use(auth);
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
-app.use('*', (req, res) => {
-  res.status(NOT_FOUND_STATUS).send({ message: 'Страница не найдена' });
+app.use('*', (req, res, next) => {
+  next(new NotFoundError('Страница не найдена'));
 });
 
 app.use(errors());
