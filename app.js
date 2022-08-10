@@ -36,7 +36,6 @@ app.use('*', (req, res, next) => {
 
 app.use(errors());
 
-// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = INTERNAL_SERVER_ERROR_STATUS, message } = err;
@@ -50,6 +49,7 @@ app.use((err, req, res, next) => {
         // ? 'На сервере произошла ошибка'
         : message,
     });
+  next();
 });
 
 app.listen(PORT, () => {
