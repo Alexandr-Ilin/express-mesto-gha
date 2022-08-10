@@ -15,3 +15,5 @@ module.exports = {
   JWT_SECRET,
   regex,
 };
+
+// eslint-disable-next-line no-useless-escape
