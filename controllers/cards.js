@@ -4,7 +4,6 @@ const NotFoundError = require('../utils/errors/NotFoundError');
 const ForbiddenError = require('../utils/errors/ForbiddenError');
 
 const {
-  OK_STATUS,
   CREATED_STATUS,
 } = require('../utils/consts');
 
@@ -27,28 +26,22 @@ const createCard = (req, res, next) => {
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => {
-      if (cards.length === 0) {
-        res.status(OK_STATUS).send(cards);
-        return;
-      }
-      res.status(OK_STATUS).send(cards);
-    })
+    .then((cards) => res.send(cards))
     .catch(next);
 };
 
 const getCardById = (req, res, next) => {
-  Card.findById(req.params.id)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        next(new NotFoundError('Пользователь с таким ID не найден.'));
+        next(new NotFoundError('Карточка с таким ID не найдена.'));
         return;
       }
-      res.status(OK_STATUS).send(card);
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Не верный ID пользователя.'));
+        next(new BadRequestError('Не верный ID карточки.'));
         return;
       }
       next(err);
@@ -67,7 +60,7 @@ const deleteCard = (req, res, next) => {
         return;
       }
       Card.findByIdAndDelete(req.params.cardId)
-        .then(() => res.status(OK_STATUS).send({ message: 'Карточка удалена' }))
+        .then(() => res.send({ message: 'Карточка удалена' }))
         .catch(next);
     })
     .catch((err) => {
@@ -86,7 +79,7 @@ const likeCard = (req, res, next) => {
         next(new NotFoundError('Карточка с таким ID не найдена.'));
         return;
       }
-      res.status(OK_STATUS).send(card);
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -104,7 +97,7 @@ const dislikeCard = (req, res, next) => {
         next(new NotFoundError('Карточка с таким ID не найдена.'));
         return;
       }
-      res.status(OK_STATUS).send(card);
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {

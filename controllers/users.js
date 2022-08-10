@@ -6,7 +6,6 @@ const ConflictError = require('../utils/errors/ConflictError');
 const BadRequestError = require('../utils/errors/BadRequestError');
 
 const {
-  OK_STATUS,
   CREATED_STATUS,
   JWT_SECRET,
 } = require('../utils/consts');
@@ -31,7 +30,7 @@ const login = (req, res, next) => {
 const getMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
-      res.status(OK_STATUS).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       next(err);
@@ -71,13 +70,7 @@ const createUser = (req, res, next) => {
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => {
-      if (users.length === 0) {
-        next(new NotFoundError('Пользователи не найдены.'));
-        return;
-      }
-      res.status(OK_STATUS).send(users);
-    })
+    .then((users) => res.send(users))
     .catch(next);
 };
 
@@ -88,7 +81,7 @@ const getUserById = (req, res, next) => {
         next(new NotFoundError('Нет пользователя с таким id'));
         return;
       }
-      res.status(OK_STATUS).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -107,7 +100,7 @@ const updateUserProfile = (req, res, next) => {
         next(new NotFoundError({ message: 'Пользователь с таким ID не найден.' }));
         return;
       }
-      res.status(OK_STATUS).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -128,10 +121,10 @@ const updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        next(new BadRequestError('Некоректный ID пользователя.'));
+        next(new NotFoundError({ message: 'Пользователь с таким ID не найден.' }));
         return;
       }
-      res.status(OK_STATUS).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
