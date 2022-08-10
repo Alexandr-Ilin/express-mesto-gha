@@ -1,4 +1,13 @@
 const { celebrate, Joi } = require('celebrate');
+const validator = require('validator');
+const BadRequestError = require('../utils/errors/BadRequestError');
+
+const validateURL = (value) => {
+  if (!validator.isURL(value, { require_protocol: true })) {
+    throw new BadRequestError('Неправильный формат ссылки');
+  }
+  return value;
+};
 
 const validationUpdateUser = celebrate({
   body: Joi.object().keys({
@@ -15,7 +24,7 @@ const validationUpdateAvatar = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string()
       .required()
-      .uri({ scheme: [/https?/] }),
+      .custom((value) => validateURL(value)),
   }),
 });
 
@@ -43,7 +52,7 @@ const validationCreateCard = celebrate({
       .max(30),
     link: Joi.string()
       .required()
-      .uri({ scheme: [/https?/] }),
+      .custom((value) => validateURL(value)),
   }),
 });
 
@@ -56,7 +65,7 @@ const validationCreateUser = celebrate({
       .min(2)
       .max(30),
     avatar: Joi.string()
-      .uri({ scheme: [/https?/] }),
+      .custom((value) => validateURL(value)),
     email: Joi.string()
       .required()
       .email({ tlds: { allow: false } }),
