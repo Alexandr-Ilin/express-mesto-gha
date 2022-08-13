@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-// const cors = require('cors');
+const cors = require('cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/index');
 const { INTERNAL_SERVER_ERROR_STATUS } = require('./utils/consts');
@@ -12,24 +12,25 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-const allowedCors = [
-  'http://ilin.nomoredomains.sbs',
-  'https://ilin.nomoredomains.sbs',
-  'http://localhost:3000',
-];
+// const allowedCors = [
+//   'http://ilin.nomoredomains.sbs',
+//   'https://ilin.nomoredomains.sbs',
+//   'http://localhost:3000',
+// ];
 
-app.use((req, res, next) => {
-  const { origin } = req.headers;
-  if (allowedCors.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  res.header('Access-Control-Allow-Origin', '*');
-  next();
-});
+// app.use((req, res, next) => {
+//   const { origin } = req.headers;
+//   if (allowedCors.includes(origin)) {
+//     res.header('Access-Control-Allow-Origin', origin);
+//   }
+//   res.header('Access-Control-Allow-Origin', '*');
+//   next();
+// });
 
 // app.use(cors({
 //   origin: allowedCors,
 // }));
+app.use(cors());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
