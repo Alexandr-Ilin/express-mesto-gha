@@ -7,6 +7,7 @@ const cors = require('cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/index');
 const { INTERNAL_SERVER_ERROR_STATUS } = require('./utils/consts');
+const corsOptions = require('./middlewares/cors');
 
 const { PORT = 3000 } = process.env;
 
@@ -30,7 +31,6 @@ const app = express();
 // app.use(cors({
 //   origin: allowedCors,
 // }));
-app.use(cors());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -40,6 +40,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(requestLogger);
+
+app.use(cors(corsOptions));
 
 app.use(router);
 
