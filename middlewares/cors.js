@@ -6,7 +6,7 @@ const allowedCors = [
 
 const corsOptions = {
   origin: function corsOk(origin, callback) {
-    if (allowedCors.indexOf(origin) !== -1) {
+    if (allowedCors.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
