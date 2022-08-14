@@ -5,6 +5,7 @@ const allowedCors = [
 ];
 
 const corsOptions = {
+  credentials: true,
   origin: function corsOk(origin, callback) {
     if (allowedCors.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
