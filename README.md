@@ -49,3 +49,5 @@
 * Клонировать репозиторий
 * `npm i` - установка зависимостей Frontend
 * `npm run start` - запуск Frontend на http://localhost:3000/
+---
+[Фронтенд на GitHub](https://github.com/Alexandr-Ilin/mesto-react)
