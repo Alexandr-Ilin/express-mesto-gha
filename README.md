@@ -1,28 +1,51 @@
-[![Tests](https://github.com/Alexandr-Ilin/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/Alexandr-Ilin/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/Alexandr-Ilin/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/Alexandr-Ilin/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
-# Проект Mesto фронтенд + бэкенд
+# Проект Место. Backend.
 
+### Описание
+Бэкенд для сервиса просмотра фотографий, выложеных пользователями. Пользователь может просматривать и оценивать фотографии, выкладывать и удалять свои. Редактировать свой профиль, поменять аватар и данные.
 
+### Функциональность
+* Регистрация и авторизация пользователя
+* Редактирования данных профиля
+* Загрузка и удаление своих фотографий
+* Оценка фотографий ("like")
 
-## Настройка бейджей статуса тестов
-Перед началом работы над проектом рекомендуется исправить бейджи, отражающие статус прохождения тестов.
-Для этого замените разметку бейджей на следующий фрагмент, подставив вместо `${имя_пользователя}` и `${имя_репозитория}` соответствующие значения.
+### Используемые технологии и выполненные задачи
+* JavaScript
+* JSON
+* REST API
+* Node.js
+* mongoDB
+* express.js
+* mongoose
+* Celebrate
+* Rate Limiter
+* Winston
+* Централизованый обработчик ошибок
+* Регистрация доменов
+* Настройка Nginx
+* pm2
+* Выпуск SSL сертификата
+* Деплой на Yandex Cloud
 
-```
-[![Tests for sprint 13](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-13-sprint.yml) 
+### Используемые технологии и выполненные задачи
+* JavaScript
+* JSON
+* REST API
+* Node.js
+* mongoDB
+* express.js
+* mongoose
+* Celebrate
+* Rate Limiter
+* Winston
+* Централизованый обработчик ошибок
+* Регистрация доменов
+* Настройка Nginx
+* pm2
+* Выпуск SSL сертификата
+* Деплой на Yandex Cloud
 
-[![Tests for sprint 14](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-14-sprint.yml)
-```
-
-
-## Директории
-
-`/routes` — папка с файлами роутера  
-`/controllers` — папка с файлами контроллеров пользователя и карточки   
-`/models` — папка с файлами описания схем пользователя и карточки  
-  
-Остальные директории вспомогательные, создаются при необходимости разработчиком
-
-## Запуск проекта
-
-`npm run start` — запускает сервер   
-`npm run dev` — запускает сервер с hot-reload
+### Установка зависимостей и запуск приложения локально
+* Клонировать репозиторий
+* `npm i` - установка зависимостей Frontend
+* `npm run start` - запуск Frontend на http://localhost:3000/
